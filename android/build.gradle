@@ -1,0 +1,45 @@
+group 'com.example.flutter_toutiao_adsdk'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    // implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation files('libs/android-query-full.0.26.7.jar')
+    api (name: 'open_ad_sdk', ext: 'aar')
+    api (name: 'android-gif-drawable-1.2.6', ext: 'aar')
+
+}
