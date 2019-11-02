@@ -131,7 +131,7 @@ class _FlutterPangolinBannerViewState extends State<FlutterPangolinBannerView> {
       width: loaded ? bannerWidth.toDouble() : 1,
       child: AndroidView(
           viewType: PangolinNativeKey.BANNER_AD_KEY,
-          onPlatformViewCreated: (final int id) async {
+          onPlatformViewCreated: (final int id) {
             _channelId = id;
             Log.i(
                 "flutter_pangolin_plugin: android banner ad view created, $id");
@@ -146,17 +146,9 @@ class _FlutterPangolinBannerViewState extends State<FlutterPangolinBannerView> {
       width: loaded ? bannerWidth.toDouble() : 1,
       child: UiKitView(
         viewType: PangolinNativeKey.BANNER_AD_KEY,
-        creationParams: <String, dynamic>{
-          "codeId": widget.positionId,
-          "params": {
-            "bannerWidth": bannerWidth,
-            "bannerHeight": bannerHeight,
-          },
-        },
-        creationParamsCodec: StandardMessageCodec(),
-        onPlatformViewCreated: (int id) {
+        onPlatformViewCreated: (final int id) {
           _channelId = id;
-          Log.i("flutter_pangolin_plugin: ios banner view created.");
+          Log.i("flutter_pangolin_plugin: ios banner view created, $id");
           _loadView();
         },
       ),

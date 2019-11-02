@@ -131,10 +131,6 @@ public class FlutterToutiaoAdsdkPlugin implements MethodCallHandler {
         if (params.containsKey(Consts.ParamKey.SUPPORT_MULTI_PROCESS)) {
           builder.supportMultiProcess((boolean) params.get(Consts.ParamKey.SUPPORT_MULTI_PROCESS));
         }
-
-        if (params.containsKey(Consts.ParamKey.USER_GENDER)) {
-          builder.gender((int) params.get(Consts.ParamKey.USER_GENDER));
-        }
       } catch (Exception e) {
         // do nothing
       }
@@ -422,7 +418,7 @@ public class FlutterToutiaoAdsdkPlugin implements MethodCallHandler {
     }
 
     @Override
-    public void onRewardVerify(boolean b, int i, String s) {
+    public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName, int errorCode, String errorMsg) {
 
     }
 

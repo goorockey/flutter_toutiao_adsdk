@@ -63,7 +63,7 @@ public class BannerAdManager {
   }
 
   private AdSlot getAdSlot(String positionId, int bannerWidth, int bannerHeight) {
-    return new AdSlot.Builder().setCodeId(positionId).setAdCount(3)
+    return new AdSlot.Builder().setCodeId(positionId).setAdCount(1)
         .setExpressViewAcceptedSize(bannerWidth, bannerHeight).setImageAcceptedSize(640, 320).setSupportDeepLink(true)
         .build();
   }

@@ -119,32 +119,35 @@ public class FlutterPangolinSplashAd extends FlutterPangolinBaseAd implements Me
         @Override
         public void onError(int code, String message) {
           Log.e(Consts.TAG, String.format("SplashAd loaded error: %s, %s, %s", codeId, code, message));
-          try {
-            result.success(false);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              methodChannel.invokeMethod("adError", null);
+            }
+          });
         }
 
         @Override
         public void onTimeout() {
           Log.e(Consts.TAG, String.format("SplashAd loaded timeout"));
-          try {
-            result.success(false);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              methodChannel.invokeMethod("adError", null);
+            }
+          });
         }
 
         @Override
         public void onSplashAdLoad(TTSplashAd ad) {
           if (ad == null) {
             Log.e(Consts.TAG, "SplashAd loaded empty: ad is null!");
-            try {
-              result.success(false);
-            } catch (Exception e) {
-              e.printStackTrace();
-            }
+            mActivity.runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                methodChannel.invokeMethod("adError", null);
+              }
+            });
             return;
           }
 

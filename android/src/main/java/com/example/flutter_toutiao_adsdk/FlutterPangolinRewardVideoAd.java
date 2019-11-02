@@ -135,7 +135,7 @@ public class FlutterPangolinRewardVideoAd extends FlutterPangolinBaseAd implemen
       }
 
       @Override
-      public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName) {
+      public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName, int errorCode, String errorMsg) {
         System.out.println("Flutter_pangolin_reward_video: onRewardVerify");
       }
 

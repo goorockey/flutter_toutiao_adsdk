@@ -1,4 +1,5 @@
 #import "FlutterPangolinBannerAd.h"
+#import "FlutterPangolinSplashAd.h"
 #import "FlutterToutiaoAdsdkPlugin.h"
 #import <BUAdSDK/BUAdSDK.h>
 
@@ -27,6 +28,7 @@ static const int VIDEO_REWARD_VERIFIED = 5;
   [registrar addMethodCallDelegate:instance channel:channel];
   
   [registrar registerViewFactory:[[FlutterPangolinBannerAd alloc] initWithMessenger:registrar.messenger] withId:@"flutter_pangolin_banner_ad"];
+  [registrar registerViewFactory:[[FlutterPangolinSplashAd alloc] initWithMessenger:registrar.messenger] withId:@"flutter_pangolin_splash_ad"];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -44,6 +46,7 @@ static const int VIDEO_REWARD_VERIFIED = 5;
 - (void)initSDK:(FlutterMethodCall*)call result:(FlutterResult)result {
   NSString *appId = call.arguments[@"appId"];
   [BUAdSDKManager setAppID:appId];
+  [BUAdSDKManager setIsPaidApp:NO];
   result(@(YES));
 }
 

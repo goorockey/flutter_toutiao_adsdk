@@ -151,6 +151,8 @@ public class FlutterPangolinExpressAd extends  FlutterPangolinBaseAd implements 
         }
 
         mTTNaviteExpreddAd = ads.get(0);
+        mTTNaviteExpreddAd.setSlideIntervalTime(10*1000);//设置轮播间隔 ms,不调用则不进行轮播展示
+
 
         mTTNaviteExpreddAd.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
           @Override

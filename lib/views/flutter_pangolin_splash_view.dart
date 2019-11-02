@@ -93,7 +93,12 @@ class _FlutterPangolinSplashViewState extends State<FlutterPangolinSplashView> {
           _loadView();
         });
         break;
-
+      }
+      case 'adError': {
+        widget.onError?.call(() {
+          _loadView();
+        });
+        break;
       }
       case 'adClicked': {
         widget.onClick?.call(() {
@@ -113,7 +118,7 @@ class _FlutterPangolinSplashViewState extends State<FlutterPangolinSplashView> {
   Widget _androidView() {
     return AndroidView(
         viewType: PangolinNativeKey.SPLASH_AD_KEY,
-        onPlatformViewCreated: (final int id) async {
+        onPlatformViewCreated: (final int id) {
           _channelId = id;
           Log.i("flutter_pangolin_plugin: android splash view created, $id");
           _loadView();
@@ -123,13 +128,9 @@ class _FlutterPangolinSplashViewState extends State<FlutterPangolinSplashView> {
   Widget _iosView() {
     return UiKitView(
       viewType: PangolinNativeKey.SPLASH_AD_KEY,
-      creationParams: <String, dynamic>{
-        "codeId": widget.positionId,
-      },
-      creationParamsCodec: StandardMessageCodec(),
-      onPlatformViewCreated: (int id) {
+      onPlatformViewCreated: (final int id) {
         _channelId = id;
-        Log.i("flutter_pangolin_plugin: ios splash view created.");
+        Log.i("flutter_pangolin_plugin: ios splash view created, $id");
         _loadView();
       },
     );

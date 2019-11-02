@@ -2,9 +2,6 @@
 //  FlutterPangolinBannerAd.m
 //  Runner
 //
-//  Created by luopetter on 2019/6/24.
-//  Copyright © 2019 The Chromium Authors. All rights reserved.
-//
 
 #import "FlutterPangolinBannerAd.h"
 #import <BUAdSDK/BUAdSDK.h>
@@ -38,52 +35,77 @@
 {
     int64_t _viewId;
     UIView* _adView;
+    FlutterMethodChannel* _channel;
+    BUBannerAdView* _bannerView;
 }
 
 - (instancetype) initWithWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
 {
     if ([super init]) {
-        NSDictionary *dic = args;
-        NSString *codeId = dic[@"codeId"];
-        if (codeId == nil) {
-            NSLog(@"Flutter_pangolin_plugin: no codeId with bannerAd");
-            return self;
-        }
-
-        NSDictionary *params = dic[@"params"];
-        if (params == nil || params[@"bannerWidth"] == nil || params[@"bannerHeight"] == nil) {
-            NSLog(@"Flutter_pangolin_plugin: no bannerWidth or bannerHeight with bannerAd");
-            return self;
-        }
-        
         _adView = [[UIView alloc] init];
         _viewId = viewId;
         
         NSString* channelName = [NSString stringWithFormat:@"flutter_pangolin_banner_ad_%lld", viewId];
-        FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
+        _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
-        [channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+        [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
             [weakSelf onMethodCall:call result:result];
         }];
         
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
-        UIViewController *viewController = window.rootViewController;
-        BUSize* bannerSize = [BUSize sizeBy:BUProposalSize_Banner600_260];
-        BUBannerAdView* bannerView = [[BUBannerAdView alloc] initWithSlotID:codeId size:bannerSize rootViewController:viewController];
-        [bannerView loadAdData];
-        bannerView.frame = CGRectMake(0, 0, [params[@"bannerWidth"] floatValue], [params[@"bannerHeight"] floatValue]);
-        bannerView.delegate = self;
-        [_adView addSubview:bannerView];
     }
     return self;
 }
 
 - (void) onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    if([@"loadBannerAd" isEqualToString:call.method]){
+        [self loadBannerAd:call result: result];
+        return;
+    }
+
+    result(FlutterMethodNotImplemented);
 }
 
 - (UIView *)view
 {
     return _adView;
+}
+
+- (void) loadBannerAd:(FlutterMethodCall*)call result:(FlutterResult)result {
+    @try {
+        if (_bannerView == nil) {
+            NSDictionary *dic = call.arguments;
+            NSString *codeId = dic[@"codeId"];
+            if (codeId == nil) {
+                NSLog(@"Flutter_pangolin_plugin: no codeId with bannerAd");
+                result(@(NO));
+                return;
+            }
+
+            if (dic[@"bannerWidth"] == nil || dic[@"bannerHeight"] == nil) {
+                NSLog(@"Flutter_pangolin_plugin: no bannerWidth or bannerHeight with bannerAd");
+                result(@(NO));
+                return;
+            }
+
+            UIWindow *window = [UIApplication sharedApplication].keyWindow;
+            UIViewController *viewController = window.rootViewController;
+            BUSize* bannerSize = [BUSize sizeBy:BUProposalSize_Banner600_260];
+            _bannerView = [[BUBannerAdView alloc] initWithSlotID:codeId 
+                                                                        size:bannerSize
+                                                            rootViewController:viewController];
+            _bannerView.frame = CGRectMake(0, 0, [dic[@"bannerWidth"] floatValue], [dic[@"bannerHeight"] floatValue]);
+            _bannerView.delegate = self;
+            [_adView addSubview:_bannerView];
+        }
+
+        [_bannerView loadAdData];
+
+        result(@(YES));
+    } @catch (NSException *exception) {
+        NSLog(@"%@", exception);
+
+        result(@(NO));
+    }
 }
 
 /**
@@ -103,6 +125,7 @@
 - (void)bannerAdView:(BUBannerAdView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error
 {
     NSLog(@"Flutter_pangolin_plugin: bannerAd load failed. %@", error);
+    [_channel invokeMethod:@"adError" arguments:nil];
 }
 
 /**
@@ -111,6 +134,7 @@
 - (void)bannerAdViewDidBecomVisible:(BUBannerAdView *)bannerAdView WithAdmodel:(BUNativeAd *_Nullable)nativeAd
 {
     NSLog(@"Flutter_pangolin_plugin：bannerAd become visible");
+    [_channel invokeMethod:@"adLoaded" arguments:nil];
 }
 
 /**
@@ -119,6 +143,8 @@
 - (void)bannerAdViewDidClick:(BUBannerAdView *)bannerAdView WithAdmodel:(BUNativeAd *_Nullable)nativeAd
 {
     NSLog(@"Flutter_pangolin_plugin: bannerAd did click.");
+
+    [_channel invokeMethod:@"adClicked" arguments:nil];
 }
 
 /**
